@@ -178,8 +178,8 @@ def insert_indexed_link(keyword, link):
         connection = mysql.connector.connect(
             host='localhost',
             database='bingoo',
-            user='enrell',
-            password='enrellsa10'
+            user='',
+            password=''
         )
         cursor = connection.cursor()
         keyword_id = get_keyword_id(keyword, cursor)  # Obtém o ID da palavra-chave usando a função "get_keyword_id"
