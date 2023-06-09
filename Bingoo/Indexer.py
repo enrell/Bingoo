@@ -252,7 +252,8 @@ links = [
 
 btree = find_keywords(links)
 
-crawl_links(links)
+# crawl_links(links)
+
 # Imprime a árvore B
 print('B-Tree:')
 btree.print_tree()
