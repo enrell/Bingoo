@@ -1,7 +1,39 @@
-<script setup>
+<script>
 import SearchBar from '../components/SearchBar.vue'
-import { ref } from 'vue'
+import { useStore } from 'vuex'
+import { watch } from 'vue'
+import axios from 'axios'
 
+export default {
+  components: {
+    SearchBar
+  },
+  setup() {
+    const store = useStore()
+    let keyword = store.state.keyword
+
+    const sendRequest = async () => {
+      try {
+        const response = await axios.get(`http://localhost:3000/api/search?keyword=${keyword}`)
+        const links = response.data.links
+        store.commit('setLinks', links)
+      } catch (error) {
+        console.error(error)
+      }
+    }
+
+    watch(
+      () => store.state.keyword,
+      () => {
+        sendRequest()
+      }
+    )
+
+    return {
+      sendRequest
+    }
+  }
+}
 </script>
 
 <template>
@@ -9,11 +41,14 @@ import { ref } from 'vue'
     <div class="search-container">
       <h1>Bingoo</h1>
     </div>
-    <SearchBar />
+    <SearchBar @search="sendRequest"/>
     <div id="results">
-      <ul>
-        <li></li>
+      <ul v-if="$store.state.links.length > 0">
+        <li v-for="(link, index) in $store.state.links" :key="index">
+          <a :href="link" target="_blank">{{ link }}</a>
+        </li>
       </ul>
+       <p v-else class="no-results-message">Nenhum resultado encontrado para a pesquisa.</p>
     </div>
   </main>
 </template>

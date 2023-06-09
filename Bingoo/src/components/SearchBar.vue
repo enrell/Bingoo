@@ -1,23 +1,50 @@
-<script setup></script>
+<script>
+import { ref } from 'vue'
+import axios from 'axios'
+import { useRouter } from 'vue-router'
+import { useStore } from 'vuex'
+
+export default {
+  setup() {
+    const searchTerm = ref('')
+    const router = useRouter()
+    const store = useStore()
+
+    const sendRequest = () => {
+      const keyword = searchTerm.value
+
+      axios
+        .get(`http://localhost:3000/api/search?keyword=${keyword}`)
+        .then((response) => {
+          console.log(response.data)
+
+          const links = response.data.links
+          store.commit('setLinks', links)
+          router.push('/ResultPage')
+        })
+        .catch((error) => {
+          console.error(error)
+        })
+    }
+    return {
+      searchTerm,
+      sendRequest
+    }
+  }
+}
+</script>
 
 <template>
   <div class="search-container">
-    <textarea
-      name="Search"
-      maxlength="1024"
-      spellcheck="false"
-      type="search"
-      aria-label="Pesquisar"
-    >
-    </textarea>
-    <button on-click="/ResultPage" @click="">Enviar</button>
+    <input type="search" v-model="searchTerm" @keyup.enter="sendRequest"/>
+    <button @click="sendRequest" >Enviar</button>
   </div>
 </template>
 
 <style scoped>
-textarea {
+input {
   width: 50vh;
-  height: 2.5vh;
+  height: 5vh;
   font-size: 2vh;
   padding: 0.5em;
   border: 0.2em solid #000000;
